@@ -1,0 +1,33 @@
+{
+  "name": "protocol-analyzer",
+  "version": "0.0.0",
+  "description": "web based rs-232 protocol analyzer",
+  "main": "index.js",
+  "scripts": {
+    "start": "node bin/protocol-analyzer",
+    "dev": "node-dev bin/protocol-analyzer",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "protocol-analyzer": "bin/protocol-analyzer"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/keyvanfatehi/node-protocol-analyzer"
+  },
+  "author": "Keyvan Fatehi <keyvanfatehi@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/keyvanfatehi/node-protocol-analyzer/issues"
+  },
+  "homepage": "https://github.com/keyvanfatehi/node-protocol-analyzer",
+  "dependencies": {
+    "serialport": "~1.4.10",
+    "express": "~4.10.6",
+    "jade": "~1.8.2",
+    "browserify-middleware": "~4.1.0",
+    "socket.io": "~1.2.1",
+    "socket.io-client": "~1.2.1",
+    "jquery": "~2.1.3"
+  }
+}

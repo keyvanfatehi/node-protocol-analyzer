@@ -1,0 +1,12 @@
+doctype html
+html(lang="en")
+  head
+    title Protocol Analyzer
+  body
+    p Select serial ports
+    div#ports
+      each port in ports
+        div
+          input(type="checkbox" value="#{port.comName}")
+          label= port.comName
+    script(src='/js/bundle.js')
