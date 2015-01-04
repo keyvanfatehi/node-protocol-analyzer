@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+var app = require('../server/app');
+var server = require('http').createServer(app);
+var port = process.env.PORT || 3000;
+var BackChannel = require('../server/backchannel')
+var ProbeManager = require('../server/probe_manager')
+var pm = new ProbeManager();
+var bc = new BackChannel(pm);
+app.probeManager = pm;
+bc.io.listen(server);
+server.listen(port);
+console.log('Listening on port '+port);

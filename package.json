@@ -4,12 +4,12 @@
   "description": "web based rs-232 protocol analyzer",
   "main": "index.js",
   "scripts": {
-    "start": "node bin/server",
-    "dev": "node-dev bin/server",
+    "start": "node bin/backend",
+    "dev": "node-dev bin/backend",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "protocol-analyzer": "bin/server"
+    "protocol-analyzer": "bin/backend"
   },
   "repository": {
     "type": "git",

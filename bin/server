@@ -1,8 +1,0 @@
-#!/usr/bin/env node
-var app = require('../server/app');
-var io = require('../server/socketio');
-var server = require('http').createServer(app);
-var port = process.env.PORT || 3000;
-io.listen(server);
-server.listen(port);
-console.log('Listening on port '+port);

@@ -1,6 +1,14 @@
 window.$ = require('jquery')
 window.socket = require('./socket')
 
+socket.on('err', function(stack) {
+  console.error('Backend '+stack);
+})
+
+socket.on('info', function(msg) {
+  console.info('Backend Info: '+msg);
+})
+
 socket.on('connect', function() {
   $('#disconnected').hide()
   $('#connected').show()
@@ -11,21 +19,31 @@ socket.on('disconnect', function() {
   $('#disconnected').show()
 })
 
-$('#ports input').change(function(e) {
+socket.on('probes', function(probes) {
+  console.log(probes);
+})
+
+function getSelectedPorts() {
+  return $('#ports input:checked').map(function(i,e){ return e.value })
+}
+
+$('#ports input').change(function() {
   var ports = getSelectedPorts();
   var $el = $(this);
   var checked = $el.prop('checked');
   var name = $el.val();
   if (ports.length > 2) return $el.prop('checked', false);
-  if (checked) socket.emit('activate probe', name);
+  if (checked) socket.emit('activate probe', name, getBaudRate());
   else socket.emit('deactivate probe', name);
 })
 
-$('button#start').click(function() {
-  var ports = getSelectedPorts()
-  $('#ports input:checked')
+var $baudRate = $('#baudrate').keyup(function() {
+  var $el = $(this)
+  var val = parseInt($el.val()) || 9600;
+  $el.val(val)
+  socket.emit('change baudrate', getBaudRate());
 })
 
-function getSelectedPorts() {
-  return $('#ports input:checked').map(function(i,e){ return e.value })
+function getBaudRate() {
+  return $baudRate.val()
 }
