@@ -1,6 +1,16 @@
 window.$ = require('jquery')
 window.socket = require('./socket')
 
+socket.on('connect', function() {
+  $('#disconnected').hide()
+  $('#connected').show()
+})
+
+socket.on('disconnect', function() {
+  $('#connected').hide()
+  $('#disconnected').show()
+})
+
 $('#ports input').change(function(e) {
   var ports = getSelectedPorts();
   if (ports.length > 2) return $(e.target).prop('checked', false);

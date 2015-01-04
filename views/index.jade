@@ -2,13 +2,9 @@ doctype html
 html(lang="en")
   head
     title Protocol Analyzer
-
+    link(href='/assets/style.css', rel='stylesheet')
   body
-    p Select your probes
-    div#ports
-      each port in ports
-        input(type="checkbox" value="#{port.comName}")
-        label= port.comName
-    button#start start
-    div#workspace
-    script(src='/js/bundle.js')
+    #disconnected Disconnected from backend
+    #connected
+      include ./connected.jade
+    script(src='/assets/bundle.js')
