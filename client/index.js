@@ -45,7 +45,7 @@ $('#ports input').change(function() {
   else socket.emit('deactivate probe', name);
 })
 
-var $baudRate = $('#baudrate').keyup(function() {
+var $baudRate = $('#baudrate').change(function() {
   var $el = $(this)
   var val = parseInt($el.val()) || 9600;
   $el.val(val)

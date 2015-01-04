@@ -3,6 +3,7 @@ var SerialPort = require('serialport').SerialPort
 function Probe(port){
   this.isOpen = false;
   this.port = port;
+  this.name = port.comName;
   this._serialport = null;
 }
 
@@ -12,7 +13,7 @@ Probe.prototype.setOptions = function(opts) {
 
 Probe.prototype.createSerialPort = function() {
   this._serialport = null;
-  this._serialport = new SerialPort(this.port.comName, this.options);
+  this._serialport = new SerialPort(this.name, this.options);
 }
  
 Probe.prototype.open = function(cb) {

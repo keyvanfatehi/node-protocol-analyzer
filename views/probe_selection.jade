@@ -2,5 +2,6 @@ p Select the two probes:
 div#ports
   each val, key in probes
     div
-      input(type="checkbox" checked=val.isOpen value=key)
-      label= key
+      label
+        input(type="checkbox" checked=val.isOpen value=key)
+        = key

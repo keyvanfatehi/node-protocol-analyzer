@@ -3,29 +3,48 @@ module.exports = BackChannel
   
 function BackChannel(probeManager) {
   var bc = this;
+
+  function openProbe(name) {
+    probeManager.openProbe(name, function(err, probe) {
+      if (err) return bc.err(err);
+      probe.getSerialPort().on('close', function() {
+        bc.probeClosed(probe);
+      });
+      bc.probeOpened(probe);
+    })
+  }
+
+  function closeProbe(name) {
+    probeManager.closeProbe(name, function(err) {
+      if (err) return bc.err(err);
+    })
+  }
+
   this.io = new SocketIO();
   this.io.on('connection', function(socket) {
     socket.on('activate probe', function(name, baudrate) {
       probeManager.setOptions({ baudrate: baudrate })
-      probeManager.openProbe(name, function(err, probe) {
-        if (err) return bc.err(err);
-        probe.getSerialPort().on('close', function() {
-          bc.probeClosed(name);
-        });
-        bc.probeOpened(name);
-      })
+      openProbe(name)
     });
 
     socket.on('deactivate probe', function(name) {
-      probeManager.closeProbe(name, function(err) {
-        if (err) return bc.err(err);
-      })
+      closeProbe(name)
     });
 
     socket.on('change baudrate', function(baudrate) {
       //probeManager.setOptions({ baudrate: baudrate })
       //close and reopen open probes
-      console.log('reconfiguring probes with new buad rate', rate);
+      console.log('reconfiguring probes with new buad rate', baudrate);
+      probeManager.setOptions({ baudrate: baudrate })
+      probeManager.getOpenProbes(function(err, openProbes) {
+        if (err) return bc.err(err);
+        openProbes.forEach(function(probe) {
+          probe.getSerialPort().on('close', function() {
+            openProbe(probe.name);
+          });
+          closeProbe(probe.name);
+        })
+      })
     })
   });
 }
@@ -40,11 +59,12 @@ BackChannel.prototype.info = function(msg) {
   this.io.sockets.emit('info', msg);
 }
 
-BackChannel.prototype.probeClosed = function(name) {
-  this.io.sockets.emit('probe closed', name);
+BackChannel.prototype.probeClosed = function(probe) {
+  this.io.sockets.emit('probe closed', probe.name);
+  this.info(probe.name+' closed');
 }
 
-BackChannel.prototype.probeOpened = function(name) {
-  this.io.sockets.emit('probe opened', name);
+BackChannel.prototype.probeOpened = function(probe) {
+  this.io.sockets.emit('probe opened', probe.name);
+  this.info(probe.name+' opened at '+probe.options.baudrate+' baud');
 }
-

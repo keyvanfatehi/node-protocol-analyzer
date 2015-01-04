@@ -1,4 +1,5 @@
 module.exports = ProbeManager
+var _ = require('lodash')
 var serialport = require('serialport')
 var Probe = require('./probe')
 
@@ -49,5 +50,12 @@ ProbeManager.prototype.getProbes = function(cb) {
       pm._probes[port.comName] = probe;
     })
     cb(null, pm._probes);
+  })
+}
+
+ProbeManager.prototype.getOpenProbes = function(cb) {
+  this.getProbes(function(err, probes) {
+    if (err) return cb(err);
+    cb(err, _.where(probes, { isOpen: true }));
   })
 }
