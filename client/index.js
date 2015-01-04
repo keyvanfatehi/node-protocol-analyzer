@@ -13,8 +13,12 @@ socket.on('disconnect', function() {
 
 $('#ports input').change(function(e) {
   var ports = getSelectedPorts();
-  if (ports.length > 2) return $(e.target).prop('checked', false);
-  if (ports.length === 2) socket.emit('select probes', ports[0], ports[1]);
+  var $el = $(this);
+  var checked = $el.prop('checked');
+  var name = $el.val();
+  if (ports.length > 2) return $el.prop('checked', false);
+  if (checked) socket.emit('activate probe', name);
+  else socket.emit('deactivate probe', name);
 })
 
 $('button#start').click(function() {

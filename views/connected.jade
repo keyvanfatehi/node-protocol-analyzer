@@ -1,7 +1,3 @@
-p Select your probes
-div#ports
-  each port in ports
-    input(type="checkbox" value="#{port.comName}")
-    label= port.comName
+include ./probes.jade
 button#start start
 div#workspace
