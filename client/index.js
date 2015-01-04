@@ -19,9 +19,17 @@ socket.on('disconnect', function() {
   $('#disconnected').show()
 })
 
-socket.on('probes', function(probes) {
-  console.log(probes);
+socket.on('probe closed', function(name) {
+  getPortCheckbox(name).prop('checked', false);
 })
+
+socket.on('probe opened', function(name) {
+  getPortCheckbox(name).prop('checked', true);
+})
+
+function getPortCheckbox(name) {
+  return $('#ports input[value="'+name+'"]');
+}
 
 function getSelectedPorts() {
   return $('#ports input:checked').map(function(i,e){ return e.value })

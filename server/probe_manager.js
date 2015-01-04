@@ -18,8 +18,7 @@ ProbeManager.prototype.openProbe = function(name, cb) {
     probe.open(function(err) {
       if (err) return cb(err);
       probe.isOpen = true;
-      console.log(probe);
-      cb();
+      cb(null, probe);
     })
   })
 }

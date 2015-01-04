@@ -9,14 +9,16 @@ function BackChannel(probeManager) {
       probeManager.setOptions({ baudrate: baudrate })
       probeManager.openProbe(name, function(err, probe) {
         if (err) return bc.err(err);
-        bc.info('opened '+name);
+        probe.getSerialPort().on('close', function() {
+          bc.probeClosed(name);
+        });
+        bc.probeOpened(name);
       })
     });
 
     socket.on('deactivate probe', function(name) {
       probeManager.closeProbe(name, function(err) {
         if (err) return bc.err(err);
-        bc.info('closed '+name);
       })
     });
 
@@ -37,3 +39,12 @@ BackChannel.prototype.info = function(msg) {
   console.log(msg);
   this.io.sockets.emit('info', msg);
 }
+
+BackChannel.prototype.probeClosed = function(name) {
+  this.io.sockets.emit('probe closed', name);
+}
+
+BackChannel.prototype.probeOpened = function(name) {
+  this.io.sockets.emit('probe opened', name);
+}
+

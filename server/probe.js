@@ -9,24 +9,23 @@ function Probe(port){
 Probe.prototype.setOptions = function(opts) {
   this.options = opts;
 }
- 
-// below try catches dont work because ther is an error happening async somewhere
-// we can catch it if we start using promises, or we can use domain
 
+Probe.prototype.createSerialPort = function() {
+  this._serialport = null;
+  this._serialport = new SerialPort(this.port.comName, this.options);
+}
+ 
 Probe.prototype.open = function(cb) {
-  try {
-    this._serialport = new SerialPort(this.port.comName)
-    this._serialport.on('open', cb);
-  } catch (e) {
-    cb(e)
-  }
+  if (this.isOpen) return cb(new Error('Port is already open.'));
+  this.createSerialPort();
+  this.getSerialPort().on('open', cb);
 }
 
 Probe.prototype.close = function(cb) {
-  console.log(this);
-  try {
-    this._serialport.close(cb);
-  } catch (e) {
-    cb(e)
-  }
+  if (this.isOpen) return this.getSerialPort().close(cb);
+  return cb(new Error('Port is already closed.'));
+}
+
+Probe.prototype.getSerialPort = function() {
+  return this._serialport;
 }
