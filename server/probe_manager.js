@@ -5,10 +5,15 @@ var Probe = require('./probe')
 
 function ProbeManager() {
   this._probes = {};
+  this.options = {
+    baudrate: 9600
+  };
 }
 
 ProbeManager.prototype.setOptions = function(opts) {
-  this.options = opts;
+  this.options = {
+    baudrate: parseInt(opts.baudrate)
+  };
 }
 
 ProbeManager.prototype.openProbe = function(name, cb) {

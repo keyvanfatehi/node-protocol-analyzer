@@ -1,5 +1,7 @@
 window.$ = require('jquery')
 window.socket = require('./socket')
+var Workspace = require('./workspace')
+var workspace = new Workspace('#workspace');
 
 socket.on('err', function(stack) {
   console.error('Backend '+stack);
@@ -26,6 +28,12 @@ socket.on('probe closed', function(name) {
 socket.on('probe opened', function(name) {
   getPortCheckbox(name).prop('checked', true);
 })
+
+socket.on('changed options', function(options) {
+  $('select#baudrate').val(options.baudrate);
+})
+
+socket.on('probe data', workspace.handleProbeData);
 
 function getPortCheckbox(name) {
   return $('#ports input[value="'+name+'"]');

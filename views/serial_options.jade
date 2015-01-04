@@ -1,22 +1,7 @@
 h2 Baud Rate
 select#baudrate
-  option(value=115200) 115200
-  option(value=57600) 57600
-  option(value=38400) 38400
-  option(value=19200) 19200
-  option(value=9600 selected) 9600
-  option(value=4800) 4800
-  option(value=2400) 2400
-  option(value=1800) 1800
-  option(value=1200) 1200
-  option(value=600) 600
-  option(value=300) 300
-  option(value=200) 200
-  option(value=150) 150
-  option(value=134) 134
-  option(value=110) 110
-  option(value=75) 75
-  option(value=50) 50
+  each baudrate in baudrates
+    option(value=baudrate selected=options.baudrate===baudrate)= baudrate
 
 //h3 Data Bits
 //input#databits(

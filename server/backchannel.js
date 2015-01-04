@@ -10,6 +10,9 @@ function BackChannel(probeManager) {
       probe.getSerialPort().on('close', function() {
         bc.probeClosed(probe);
       });
+      probe.getSerialPort().on('data', function(buf) {
+        bc.gotProbeData(probe, buf);
+      });
       bc.probeOpened(probe);
     });
   }
@@ -20,7 +23,7 @@ function BackChannel(probeManager) {
     });
   }
 
-  function changeProbeOptions(options) {
+  function changeOptions(options) {
     probeManager.setOptions(options);
     probeManager.getOpenProbes(function(err, openProbes) {
       if (err) return bc.err(err);
@@ -31,6 +34,7 @@ function BackChannel(probeManager) {
         closeProbe(probe.name);
       });
     });
+    bc.changedOptions(options);
   }
 
   this.io = new SocketIO();
@@ -45,7 +49,7 @@ function BackChannel(probeManager) {
     });
 
     socket.on('change baudrate', function(baudrate) {
-      changeProbeOptions({ baudrate: baudrate });
+      changeOptions({ baudrate: baudrate });
     });
   });
 }
@@ -68,4 +72,12 @@ BackChannel.prototype.probeClosed = function(probe) {
 BackChannel.prototype.probeOpened = function(probe) {
   this.io.sockets.emit('probe opened', probe.name);
   this.info(probe.name+' opened at '+probe.options.baudrate+' baud');
+}
+
+BackChannel.prototype.changedOptions = function(options) {
+  this.io.sockets.emit('changed options', options);
+}
+
+BackChannel.prototype.gotProbeData = function(probe, buffer) {
+  this.io.sockets.emit('probe data', probe.name, buffer);
 }

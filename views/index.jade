@@ -6,5 +6,9 @@ html(lang="en")
   body
     #disconnected Disconnected from backend
     #connected
-      include ./connected.jade
+      h1 Serial Port Options
+      include ./serial_options.jade
+      h1 Probe Selection
+      include ./probe_selection.jade
+    div#workspace
     script(src='/assets/bundle.js')
