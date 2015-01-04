@@ -20,6 +20,19 @@ function BackChannel(probeManager) {
     })
   }
 
+  function changeProbeOptions(options) {
+    probeManager.setOptions(options);
+    probeManager.getOpenProbes(function(err, openProbes) {
+      if (err) return bc.err(err);
+      openProbes.forEach(function(probe) {
+        probe.getSerialPort().on('close', function() {
+          openProbe(probe.name);
+        });
+        closeProbe(probe.name);
+      })
+    })
+  }
+
   this.io = new SocketIO();
   this.io.on('connection', function(socket) {
     socket.on('activate probe', function(name, baudrate) {
@@ -32,19 +45,7 @@ function BackChannel(probeManager) {
     });
 
     socket.on('change baudrate', function(baudrate) {
-      //probeManager.setOptions({ baudrate: baudrate })
-      //close and reopen open probes
-      console.log('reconfiguring probes with new buad rate', baudrate);
-      probeManager.setOptions({ baudrate: baudrate })
-      probeManager.getOpenProbes(function(err, openProbes) {
-        if (err) return bc.err(err);
-        openProbes.forEach(function(probe) {
-          probe.getSerialPort().on('close', function() {
-            openProbe(probe.name);
-          });
-          closeProbe(probe.name);
-        })
-      })
+      changeProbeOptions({ baudrate: baudrate });
     })
   });
 }
