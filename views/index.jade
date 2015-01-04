@@ -2,11 +2,13 @@ doctype html
 html(lang="en")
   head
     title Protocol Analyzer
+
   body
-    p Select serial ports
+    p Select two serial ports
     div#ports
       each port in ports
-        div
-          input(type="checkbox" value="#{port.comName}")
-          label= port.comName
+        input(type="checkbox" value="#{port.comName}")
+        label= port.comName
+    button#start start
+    div#workspace
     script(src='/js/bundle.js')
