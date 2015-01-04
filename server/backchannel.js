@@ -11,13 +11,13 @@ function BackChannel(probeManager) {
         bc.probeClosed(probe);
       });
       bc.probeOpened(probe);
-    })
+    });
   }
 
   function closeProbe(name) {
     probeManager.closeProbe(name, function(err) {
       if (err) return bc.err(err);
-    })
+    });
   }
 
   function changeProbeOptions(options) {
@@ -29,24 +29,24 @@ function BackChannel(probeManager) {
           openProbe(probe.name);
         });
         closeProbe(probe.name);
-      })
-    })
+      });
+    });
   }
 
   this.io = new SocketIO();
   this.io.on('connection', function(socket) {
     socket.on('activate probe', function(name, baudrate) {
-      probeManager.setOptions({ baudrate: baudrate })
-      openProbe(name)
+      probeManager.setOptions({ baudrate: baudrate });
+      openProbe(name);
     });
 
     socket.on('deactivate probe', function(name) {
-      closeProbe(name)
+      closeProbe(name);
     });
 
     socket.on('change baudrate', function(baudrate) {
       changeProbeOptions({ baudrate: baudrate });
-    })
+    });
   });
 }
 
