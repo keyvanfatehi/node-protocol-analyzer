@@ -1,6 +1,7 @@
 div#ports
   each val, key in probes
-    div
+    div.probe
       label
-        input(type="checkbox" checked=val.isOpen value=key)
+        input.active(type="checkbox" checked=val.isOpen value=key)
         = key
+      input.alias(data-name=key type="text" placeholder="alias") 

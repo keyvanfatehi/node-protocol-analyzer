@@ -13,8 +13,12 @@ function ConfigWindow(){
     self.handleBaudRateChange(this);
   })
 
-  $('#ports input').change(function() {
+  this.$('.probe input.active').change(function() {
     self.handleActiveProbeChange(this)
+  })
+
+  this.$('.probe input.alias').keyup(function() {
+    self.handleAliasUpdate(this)
   })
 }
 
@@ -25,7 +29,8 @@ ConfigWindow.prototype = {
   getAttributes: function() {
     return {
       baudRate: this.getBaudRate(),
-      activeProbes: this.getSelectedPorts()
+      activeProbes: this.getSelectedPorts(),
+      probeAliases: this.getProbeAliases()
     }
   },
   handleBaudRateChange: function(eventTarget) {
@@ -42,6 +47,9 @@ ConfigWindow.prototype = {
     if (ports.length > 2) return $el.prop('checked', false);
     this.emit('change', ['activeProbes'], this.getAttributes());
   },
+  handleAliasUpdate: function(eventTarget) {
+    this.emit('change', ['probeAliases'], this.getAttributes());
+  },
   setOptions: function(options) {
     this.$('select#baudrate').val(options.baudRate);
   },
@@ -53,8 +61,15 @@ ConfigWindow.prototype = {
   },
   getSelectedPorts: function() {
     var out = []
-    this.$('#ports input:checked').each(function(i, el) {
+    this.$('.probe input.active:checked').each(function(i, el) {
       out.push(el.value);
+    })
+    return out;
+  },
+  getProbeAliases: function() {
+    var out = {}
+    this.$('.probe input.alias').each(function(i, el) {
+      out[el.attributes['data-name'].value] = el.value
     })
     return out;
   }

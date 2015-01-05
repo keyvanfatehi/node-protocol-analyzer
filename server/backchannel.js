@@ -24,7 +24,7 @@ function BackChannel(probeManager) {
     });
   }
 
-  function changeOptions(options) {
+  function changeSerialOptions(options) {
     probeManager.setOptions(options);
     probeManager.getOpenProbes(function(err, openProbes) {
       if (err) return bc.err(err);
@@ -53,8 +53,12 @@ function BackChannel(probeManager) {
     });
 
     socket.on('change baudRate', function(baudRate) {
-      changeOptions({ baudRate: baudRate });
+      changeSerialOptions({ baudRate: baudRate });
     });
+
+    socket.on('change probeAliases', function(probeAliases) {
+      console.log(probeAliases);
+    })
   });
 }
 
