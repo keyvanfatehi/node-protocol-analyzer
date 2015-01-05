@@ -29,6 +29,11 @@ This program assumes you've done the hardware work already. It will open the pro
 
 The rest is a work in progress as I hack this together and update the readme with additional features. I'm expecting to implement some or all of this:
 
-* Binary, Hex, and Plaintext views
-* Session Recorder
+* Probe name aliasing
+* Session recording
+* Hexadecimal data viewing
 * Diff checker (against previously recorded sessions)
+* Man in the middle mode
+  - document alternate configuration
+  - javascript development environment
+  - reuse data snippets from recorded sessions
