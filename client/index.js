@@ -1,12 +1,12 @@
-window.$ = require('jquery')
-window.socket = require('./socket')
+var $ = require('jquery')
+var socket = require('./socket')
 var ConfigWindow = require('./config_window.js')
 var Workspace = require('./workspace')
 var workspace = new Workspace();
 
 $('.main').append(workspace.$el);
 
-var config = new ConfigWindow(socket);
+var config = new ConfigWindow();
 
 socket.on('err', function(stack) {
   console.error('Backend '+stack);

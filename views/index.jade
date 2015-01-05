@@ -7,12 +7,14 @@ html(lang="en")
     #disconnected Disconnected from backend
     .main#connected(style='display:none;')
       .configuration.window
-        .rollbtn.up
-        h1 Configuration
-        h2 Hardware Mode
-        include ./mode_selection.jade
-        h2 Serial Settings
-        include ./serial_options.jade
-        h2 Active Probes
-        include ./probe_selection.jade
+        .titlebar
+          .title Configuration
+          .roll.up
+        .content
+          h2 Hardware Mode
+          include ./mode_selection.jade
+          h2 Serial Settings
+          include ./serial_options.jade
+          h2 Active Probes
+          include ./probe_selection.jade
     script(src='/assets/bundle.js')
