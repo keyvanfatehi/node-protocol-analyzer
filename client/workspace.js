@@ -10,5 +10,8 @@ Workspace.prototype.message = function() {
 }
 
 Workspace.prototype.handleProbeData = function(probe, data) {
-  console.log(probe, data.length)
+  console.info(probe+" sniffed "+data.byteLength+" bytes")
+  var box = $('<div class="'+probe.name+'"/>');
+  box.append(probe+" sniffed "+data.byteLength+" bytes");
+  this.$el.append(box);
 }
