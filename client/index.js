@@ -1,7 +1,12 @@
 window.$ = require('jquery')
 window.socket = require('./socket')
+var ConfigWindow = require('./config_window.js')
 var Workspace = require('./workspace')
-var workspace = new Workspace('#workspace');
+var workspace = new Workspace();
+
+$('.main').append(workspace.$el);
+
+var config = new ConfigWindow(socket);
 
 socket.on('err', function(stack) {
   console.error('Backend '+stack);
@@ -22,46 +27,17 @@ socket.on('disconnect', function() {
 })
 
 socket.on('probe closed', function(name) {
-  getPortCheckbox(name).prop('checked', false);
+  config.getPortCheckbox(name).prop('checked', false);
 })
 
 socket.on('probe opened', function(name) {
-  getPortCheckbox(name).prop('checked', true);
+  config.getPortCheckbox(name).prop('checked', true);
 })
 
 socket.on('changed options', function(options) {
-  $('select#baudrate').val(options.baudrate);
+  config.setOptions(options);
 })
 
 socket.on('probe data', function(probe, data) {
   workspace.handleProbeData(probe, data);
 });
-
-function getPortCheckbox(name) {
-  return $('#ports input[value="'+name+'"]');
-}
-
-function getSelectedPorts() {
-  return $('#ports input:checked').map(function(i,e){ return e.value })
-}
-
-$('#ports input').change(function() {
-  var ports = getSelectedPorts();
-  var $el = $(this);
-  var checked = $el.prop('checked');
-  var name = $el.val();
-  if (ports.length > 2) return $el.prop('checked', false);
-  if (checked) socket.emit('activate probe', name, getBaudRate());
-  else socket.emit('deactivate probe', name);
-})
-
-var $baudRate = $('#baudrate').change(function() {
-  var $el = $(this)
-  var val = parseInt($el.val()) || 9600;
-  $el.val(val)
-  socket.emit('change baudrate', getBaudRate());
-})
-
-function getBaudRate() {
-  return $baudRate.val()
-}

@@ -1,8 +1,7 @@
-h2 Baud Rate
-select#baudrate
-  each baudrate in baudrates
-    option(value=baudrate selected=options.baudrate===baudrate)= baudrate
+label
+  | Baud rate 
+  select#baudrate
+    each baudrate in baudrates
+      option(value=baudrate selected=options.baudrate===baudrate)= baudrate
 
-//h3 Data Bits
-//input#databits(
 // and so on as documented here https://github.com/voodootikigod/node-serialport#to-use

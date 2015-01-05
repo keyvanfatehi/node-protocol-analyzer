@@ -4,6 +4,24 @@ body {
   font-family: monospace;
 }
 
-#connected {
-  display: none;
+.window {
+  position: relative;
+  background-color: #111;
+  padding: 4px;
+  border: 2px solid #222;
+}
+
+.rollbtn.up { border-bottom: 20px solid #ccc; }
+.rollbtn.down { border-top: 20px solid #ccc; }
+.rollbtn:hover { opacity: 0.8; }
+.rollbtn {
+  position: absolute;
+  right: 10px;
+  top: 25px;
+  cursor: pointer;
+  width: 0; 
+  height: 0; 
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  opacity: 0.5;
 }

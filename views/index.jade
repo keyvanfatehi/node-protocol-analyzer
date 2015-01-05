@@ -5,10 +5,14 @@ html(lang="en")
     link(href='/assets/style.css', rel='stylesheet')
   body
     #disconnected Disconnected from backend
-    #connected
-      h1 Serial Port Options
-      include ./serial_options.jade
-      h1 Probe Selection
-      include ./probe_selection.jade
-    div#workspace
+    .main#connected(style='display:none;')
+      .configuration.window
+        .rollbtn.up
+        h1 Configuration
+        h2 Hardware Mode
+        include ./mode_selection.jade
+        h2 Serial Settings
+        include ./serial_options.jade
+        h2 Active Probes
+        include ./probe_selection.jade
     script(src='/assets/bundle.js')
