@@ -6,13 +6,13 @@ var Probe = require('./probe')
 function ProbeManager() {
   this._probes = {};
   this.options = {
-    baudrate: 9600
+    baudRate: 9600
   };
 }
 
 ProbeManager.prototype.setOptions = function(opts) {
   this.options = {
-    baudrate: parseInt(opts.baudrate)
+    baudRate: parseInt(opts.baudRate)
   };
 }
 
@@ -20,6 +20,7 @@ ProbeManager.prototype.openProbe = function(name, cb) {
   var options = this.options;
   this.getProbe(name, function(err, probe) {
     if (err) return cb(err);
+    if (probe.isOpen) return cb(null, probe);
     probe.setOptions(options);
     probe.open(function(err) {
       if (err) return cb(err);
@@ -32,6 +33,7 @@ ProbeManager.prototype.openProbe = function(name, cb) {
 ProbeManager.prototype.closeProbe = function(name, cb) {
   this.getProbe(name, function(err, probe) {
     if (err) return cb(err);
+    if (!probe.isOpen) return cb();
     probe.close(function(err) {
       if (err) return cb(err);
       probe.isOpen = false;

@@ -1,5 +1,4 @@
 .window {
-  background-color: #111;
   border: 2px solid #222;
 }
 .window .content { padding: 4px; }
@@ -7,7 +6,6 @@
   cursor: pointer;
   font-size: 20px;
   font-weight: bold;
-  background-color: rgb(23, 104, 163) /* cyanish */;
   padding: 5px;
 }
 .window .titlebar .title {

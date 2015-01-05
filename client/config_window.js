@@ -1,10 +1,12 @@
 module.exports = ConfigWindow;
-var socket = require('./socket')
-var $ = require('jquery')
+var $ = require('jquery');
+var EventEmitter = require('node-event-emitter').EventEmitter;
 
 function ConfigWindow(){
+  this.emitter = new EventEmitter();
+  this.on = this.emitter.on;
+  this.emit = this.emitter.emit;
   this.$el = $('.configuration.window');
-  this.socket = socket;
   var self = this;
 
   this.$baudRate = this.$('#baudrate').change(function() {
@@ -20,11 +22,17 @@ ConfigWindow.prototype = {
   $: function(selector) {
     return this.$el.find(selector)
   },
+  getAttributes: function() {
+    return {
+      baudRate: this.getBaudRate(),
+      activeProbes: this.getSelectedPorts()
+    }
+  },
   handleBaudRateChange: function(eventTarget) {
     var $el = $(eventTarget)
     var val = parseInt($el.val()) || 9600;
     $el.val(val)
-    this.socket.emit('change baudrate', this.getBaudRate());
+    this.emit('change', ['baudRate'], this.getAttributes());
   },
   handleActiveProbeChange: function(eventTarget) {
     var ports = this.getSelectedPorts();
@@ -32,23 +40,22 @@ ConfigWindow.prototype = {
     var checked = $el.prop('checked');
     var name = $el.val();
     if (ports.length > 2) return $el.prop('checked', false);
-    if (checked) {
-      this.socket.emit('activate probe', name, this.getBaudRate());
-    } else {
-      this.socket.emit('deactivate probe', name);
-    }
+    this.emit('change', ['activeProbes'], this.getAttributes());
   },
   setOptions: function(options) {
-    this.$('select#baudrate').val(options.baudrate);
+    this.$('select#baudrate').val(options.baudRate);
   },
   getBaudRate: function() {
-    return this.$baudRate.val()
+    return parseInt(this.$baudRate.val())
   },
   getPortCheckbox: function(name) {
     return this.$('#ports input[value="'+name+'"]');
   },
   getSelectedPorts: function() {
-    var fn = function(i,e){ return e.value }
-    return this.$('#ports input:checked').map(fn)
+    var out = []
+    this.$('#ports input:checked').each(function(i, el) {
+      out.push(el.value);
+    })
+    return out;
   }
 }

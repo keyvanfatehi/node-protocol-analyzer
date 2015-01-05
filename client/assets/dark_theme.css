@@ -1,0 +1,10 @@
+body {
+  background-color: black;
+  color: white;
+}
+.window {
+  background-color: #111;
+}
+.window .titlebar {
+  background-color: rgb(23, 104, 163) /* cyanish */;
+}

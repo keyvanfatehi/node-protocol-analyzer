@@ -1,0 +1,4 @@
+.require-socket > .content { display: none; }
+.require-socket:after { content: "Disconnected from backend"; }
+.require-socket.connected > .content { display: block }
+.require-socket.connected:after { content: '' }

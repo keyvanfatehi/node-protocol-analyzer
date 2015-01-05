@@ -2,19 +2,17 @@ doctype html
 html(lang="en")
   head
     title Protocol Analyzer
-    link(href='/assets/style.css', rel='stylesheet')
+    link(href='/assets/main.css', rel='stylesheet')
   body
-    #disconnected Disconnected from backend
-    .main#connected(style='display:none;')
-      .configuration.window
-        .titlebar
-          .title Configuration
-          .roll.up
-        .content
-          h2 Hardware Mode
-          include ./mode_selection.jade
-          h2 Serial Settings
-          include ./serial_options.jade
-          h2 Active Probes
-          include ./probe_selection.jade
+    .configuration.window.require-socket
+      .titlebar
+        .title Configuration
+        .roll.up
+      .content
+        h2 Hardware Mode
+        include ./mode_selection.jade
+        h2 Serial Settings
+        include ./serial_options.jade
+        h2 Active Probes
+        include ./probe_selection.jade
     script(src='/assets/bundle.js')

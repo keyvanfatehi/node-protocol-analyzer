@@ -1,4 +1,5 @@
 var SocketIO = require('socket.io');
+var _ = require('lodash');
 module.exports = BackChannel
   
 function BackChannel(probeManager) {
@@ -39,17 +40,20 @@ function BackChannel(probeManager) {
 
   this.io = new SocketIO();
   this.io.on('connection', function(socket) {
-    socket.on('activate probe', function(name, baudrate) {
-      probeManager.setOptions({ baudrate: baudrate });
-      openProbe(name);
+    socket.on('change activeProbes', function(activeProbes) {
+      probeManager.getProbes(function(err, probes) {
+        if (err) return bc.err(err);
+        _.each(probes, function(probe) {
+          var name = probe.name;
+          var beActive = _.contains(activeProbes, name)
+          if (beActive) return openProbe(name);
+          if (! beActive) return closeProbe(name);
+        })
+      });
     });
 
-    socket.on('deactivate probe', function(name) {
-      closeProbe(name);
-    });
-
-    socket.on('change baudrate', function(baudrate) {
-      changeOptions({ baudrate: baudrate });
+    socket.on('change baudRate', function(baudRate) {
+      changeOptions({ baudRate: baudRate });
     });
   });
 }
@@ -71,7 +75,7 @@ BackChannel.prototype.probeClosed = function(probe) {
 
 BackChannel.prototype.probeOpened = function(probe) {
   this.io.sockets.emit('probe opened', probe.name);
-  this.info(probe.name+' opened at '+probe.options.baudrate+' baud');
+  this.info(probe.name+' opened at '+probe.options.baudRate+' baud');
 }
 
 BackChannel.prototype.changedOptions = function(options) {

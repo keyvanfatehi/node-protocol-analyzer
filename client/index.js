@@ -1,29 +1,18 @@
-var $ = require('jquery')
-var socket = require('./socket')
-var ConfigWindow = require('./config_window.js')
-var Workspace = require('./workspace')
+window.$ = require('jquery');
+window.socket = require('./socket');
+require('./require_socket')();
+require('./socket_console')();
+var ConfigWindow = require('./config_window');
+var Workspace = require('./workspace');
 var workspace = new Workspace();
-
-$('.main').append(workspace.$el);
-
 var config = new ConfigWindow();
 
-socket.on('err', function(stack) {
-  console.error('Backend '+stack);
-})
+$('body').append(workspace.$el);
 
-socket.on('info', function(msg) {
-  console.info('Backend Info: '+msg);
-})
-
-socket.on('connect', function() {
-  $('#disconnected').hide()
-  $('#connected').show()
-})
-
-socket.on('disconnect', function() {
-  $('#connected').hide()
-  $('#disconnected').show()
+config.on('change', function(changedKeys, attributes) {
+  changedKeys.forEach(function(key) {
+    socket.emit('change '+key, attributes[key]);
+  })
 })
 
 socket.on('probe closed', function(name) {
