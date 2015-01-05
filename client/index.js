@@ -33,7 +33,9 @@ socket.on('changed options', function(options) {
   $('select#baudrate').val(options.baudrate);
 })
 
-socket.on('probe data', workspace.handleProbeData);
+socket.on('probe data', function(probe, data) {
+  workspace.handleProbeData(probe, data);
+});
 
 function getPortCheckbox(name) {
   return $('#ports input[value="'+name+'"]');
