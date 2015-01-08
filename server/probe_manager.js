@@ -13,7 +13,8 @@ function ProbeManager() {
 
 ProbeManager.prototype.setOptions = function(opts) {
   this.options = {
-    baudRate: parseInt(opts.baudRate)
+    baudRate: parseInt(opts.baudRate),
+    mode: opts.mode
   };
 }
 

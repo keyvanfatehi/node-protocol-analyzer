@@ -1,8 +1,8 @@
-div
+div.mode-selection
   label
     input(type="radio" name="mode" checked=(options.mode==='sniffer') value='sniffer')
     |Sniffer mode. Use two serial ports to tap data lines of an independent serial connection.
-div
+  br
   label
     input(type="radio" name="mode" checked=(options.mode==='mitm') value='mitm')
-    | MITM mode. Use two serial ports to man-in-the-middle an independent serial connection. <em>(wip)</em>
+    | MITM mode. Use two serial ports to man-in-the-middle an independent serial connection.

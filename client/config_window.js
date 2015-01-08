@@ -30,11 +30,16 @@ ConfigWindow.prototype = {
       self.handleAliasUpdate(this)
     })
 
+    this.$('.mode-selection input').change(function() {
+      self.handleModeChange(this)
+    })
+
     RollupWindow.setup(this.$el);
   },
   getAttributes: function() {
     return {
       baudRate: this.getBaudRate(),
+      mode: this.getSelectedMode(),
       activeProbes: this.getSelectedPorts(),
       probeAliases: this.getProbeAliases()
     }
@@ -56,8 +61,24 @@ ConfigWindow.prototype = {
   handleAliasUpdate: function(eventTarget) {
     this.emit('change', ['probeAliases'], this.getAttributes());
   },
-  setOptions: function(options) {
-    this.$('select#baudrate').val(options.baudRate);
+  handleModeChange: function() {
+    this.emit('change', ['mode'], this.getAttributes());
+  },
+  optionsWereChanged: function(options) {
+    var keys = Object.keys(options)
+    for (var i=0; i<keys.length; i++) {
+      var key = keys[i];
+      var value = options[key];
+      this.optionWasChanged[key](this, value);
+    }
+  },
+  optionWasChanged: {
+    baudRate: function(self, newBaudRate) {
+      self.$('select#baudrate').val(newBaudRate);
+    },
+    mode: function(self, newMode) {
+      self.$('.mode-selection input[value='+newMode+']').prop('checked', true)
+    }
   },
   getBaudRate: function() {
     return parseInt(this.$baudRate.val())
@@ -71,6 +92,9 @@ ConfigWindow.prototype = {
       out.push(el.value);
     })
     return out;
+  },
+  getSelectedMode: function() {
+    return this.$('.mode-selection input:checked').val();
   },
   getProbeAliases: function() {
     var out = {}

@@ -24,7 +24,7 @@ socket.on('probe opened', function(name) {
 })
 
 socket.on('changed options', function(options) {
-  config.setOptions(options);
+  config.optionsWereChanged(options);
 })
 
 socket.on('probe data', function(probe, data) {

@@ -56,6 +56,10 @@ function BackChannel(probeManager) {
       changeSerialOptions({ baudRate: baudRate });
     });
 
+    socket.on('change mode', function(mode) {
+      changeSerialOptions({ mode: mode });
+    });
+
     socket.on('change probeAliases', function(probeAliases) {
       console.log(probeAliases);
     })
