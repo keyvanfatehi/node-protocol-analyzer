@@ -8,16 +8,18 @@ section.probe-selection("data-mode"=options.mode)
           = key
         //input.alias(data-name=key type="text" placeholder="alias") 
   section("data-mode"="mitm")
-    h2 Active Ports
+    h2 Port Configuration
     div.port
       label
         | Upstream (Computer) Port: 
         select
+          option Select a Port
           each val, key in probes
             option(selected=(val.isOpen && val.isUpstream) value=key)= key
     div.port
       label
         | Downstream (Device) Port: 
         select
+          option Select a Port
           each val, key in probes
             option(selected=(val.isOpen && val.isDownstream) value=key)= key
