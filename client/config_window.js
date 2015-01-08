@@ -98,15 +98,15 @@ ConfigWindow.prototype = {
   getSnifferProbeCheckbox: function(name) {
     return this.$('.sniffer-probe input[value="'+name+'"]');
   },
-  portWasClosed: function(name, mode, direction) {
+  portWasClosed: function(name, modeWhenOpened, direction) {
     this.caseMode({
       sniffer: function() {
         this.getSnifferProbeCheckbox(name).prop('checked', false);
       },
       mitm: function() {
-        console.log('mitm closed');
+        console.log('mitm port closed', name, direction);
       }
-    })
+    }, modeWhenOpened);
   },
   portWasOpened: function(name, mode, direction) {
     this.caseMode({
@@ -114,13 +114,12 @@ ConfigWindow.prototype = {
         this.getSnifferProbeCheckbox(name).prop('checked', true);
       },
       mitm: function() {
-        console.log('mitm opened');
-        
+        console.log('mitm port opened', name, direction);
       }
     })
   },
-  caseMode: function(funcList) {
-    var mode = this.getSelectedMode();
+  caseMode: function(funcList, modeOverride) {
+    var mode = modeOverride || this.getSelectedMode();
     if (mode === "sniffer") return funcList.sniffer.bind(this)();
     else if (mode === "mitm") return funcList.mitm.bind(this)();
     else throw new Error('Unsupported mode '+mode);

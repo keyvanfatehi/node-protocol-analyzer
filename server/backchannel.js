@@ -3,13 +3,15 @@ var _ = require('lodash');
 module.exports = BackChannel
   
 function BackChannel(probeManager) {
+  this.pm = probeManager;
   var bc = this;
 
   function openProbe(name) {
     probeManager.openProbe(name, function(err, probe) {
       if (err) return bc.err(err);
+      var modeWhenOpened = probeManager.options.mode;
       probe.getSerialPort().on('close', function() {
-        bc.probeClosed(probe);
+        bc.probeClosed(probe, modeWhenOpened);
       });
       probe.getSerialPort().on('data', function(buf) {
         bc.gotProbeData(probe, buf);
@@ -25,13 +27,16 @@ function BackChannel(probeManager) {
   }
 
   function changeSerialOptions(options) {
+    var modeNotBeingChanged = !options.mode;
     probeManager.setOptions(options);
     probeManager.getOpenProbes(function(err, openProbes) {
       if (err) return bc.err(err);
       openProbes.forEach(function(probe) {
-        probe.getSerialPort().on('close', function() {
-          openProbe(probe.name);
-        });
+        if (modeNotBeingChanged) {
+          probe.getSerialPort().on('close', function() {
+            openProbe(probe.name);
+          });
+        }
         closeProbe(probe.name);
       });
     });
@@ -76,8 +81,8 @@ BackChannel.prototype.info = function(msg) {
   this.io.sockets.emit('info', msg);
 }
 
-BackChannel.prototype.probeClosed = function(probe) {
-  this.io.sockets.emit('probe closed', probe.name);
+BackChannel.prototype.probeClosed = function(probe, mode) {
+  this.io.sockets.emit('probe closed', probe.name, mode);
   this.info(probe.name+' closed');
 }
 
