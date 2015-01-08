@@ -56,6 +56,7 @@ ConfigWindow.prototype = {
   },
   handleSnifferProbeChange: function(eventTarget) {
     var ports = this.getSelectedPorts();
+    console.log(ports);
     var $el = $(eventTarget);
     var checked = $el.prop('checked');
     var name = $el.val();
@@ -66,7 +67,7 @@ ConfigWindow.prototype = {
     var $el = $(eventTarget);
     var direction = $el.data('direction');
     var value = $el.val();
-    console.log(value, direction);
+    this.emit('change', ['activeProbes'], this.getAttributes());
   },
   handleAliasUpdate: function(eventTarget) {
     this.emit('change', ['probeAliases'], this.getAttributes());
@@ -94,15 +95,61 @@ ConfigWindow.prototype = {
   getBaudRate: function() {
     return parseInt(this.$baudRate.val())
   },
-  getPortCheckbox: function(name) {
-    return this.$('#ports input[value="'+name+'"]');
+  getSnifferProbeCheckbox: function(name) {
+    return this.$('.sniffer-probe input[value="'+name+'"]');
+  },
+  portWasClosed: function(name, mode, direction) {
+    this.caseMode({
+      sniffer: function() {
+        this.getSnifferProbeCheckbox(name).prop('checked', false);
+      },
+      mitm: function() {
+        console.log('mitm closed');
+      }
+    })
+  },
+  portWasOpened: function(name, mode, direction) {
+    this.caseMode({
+      sniffer: function() {
+        this.getSnifferProbeCheckbox(name).prop('checked', true);
+      },
+      mitm: function() {
+        console.log('mitm opened');
+        
+      }
+    })
+  },
+  caseMode: function(funcList) {
+    var mode = this.getSelectedMode();
+    if (mode === "sniffer") return funcList.sniffer.bind(this)();
+    else if (mode === "mitm") return funcList.mitm.bind(this)();
+    else throw new Error('Unsupported mode '+mode);
   },
   getSelectedPorts: function() {
+    return this.caseMode({
+      sniffer: this.getSnifferPorts,
+      mitm: this.getMitmPorts
+    })
+  },
+  getSnifferPorts: function() {
     var out = []
-    this.$('.probe input.active:checked').each(function(i, el) {
+    this.$('.sniffer-probe input.active:checked').each(function(i, el) {
       out.push(el.value);
     })
     return out;
+  },
+  getMitmPorts: function() {
+    var mkSelector = function(d) {
+      return '.mitm-port select[data-direction='+d+']'; 
+    }
+    var get = function(direction) {
+      var value = this.$(mkSelector(direction)).val();
+      return value === '' ? null : value;
+    }
+    return {
+      upstream: get('upstream'),
+      downstream: get('downstream')
+    };
   },
   getSelectedMode: function() {
     return this.$('.mode-selection input:checked').val();

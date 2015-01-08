@@ -12,18 +12,14 @@ var probeSelector = new ProbeSelector();
 $('body').append(workspace.$el);
 
 config.on('change', function(changedKeys, attributes) {
+  console.log(attributes);
   changedKeys.forEach(function(key) {
     socket.emit('change '+key, attributes[key]);
   })
 })
 
-socket.on('probe closed', function(name) {
-  config.getPortCheckbox(name).prop('checked', false);
-})
-
-socket.on('probe opened', function(name) {
-  config.getPortCheckbox(name).prop('checked', true);
-})
+socket.on('probe closed', config.portWasClosed.bind(config));
+socket.on('probe opened', config.portWasOpened.bind(config));
 
 socket.on('changed options', function(options) {
   config.optionsWereChanged(options);
@@ -32,7 +28,6 @@ socket.on('changed options', function(options) {
 socket.on('probe data', function(probe, data) {
   workspace.handleProbeData(probe, data);
 });
-
 
 config.on('changed mode', function(mode) {
   probeSelector.setMode(mode);
