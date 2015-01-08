@@ -6,7 +6,8 @@ var Probe = require('./probe')
 function ProbeManager() {
   this._probes = {};
   this.options = {
-    baudRate: 9600
+    baudRate: 38400,
+    mode: 'mitm'
   };
 }
 

@@ -1,8 +1,8 @@
 div
   label
-    input(type="radio" name="mode" checked=true value='sniffer')
+    input(type="radio" name="mode" checked=(options.mode==='sniffer') value='sniffer')
     |Sniffer mode. Use two serial ports to tap data lines of an independent serial connection.
 div
   label
-    input(type="radio" name="mode" checked=false value='mitm' disabled)
+    input(type="radio" name="mode" checked=(options.mode==='mitm') value='mitm')
     | MITM mode. Use two serial ports to man-in-the-middle an independent serial connection. <em>(wip)</em>
