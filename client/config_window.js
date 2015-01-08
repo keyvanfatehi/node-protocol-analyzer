@@ -1,4 +1,5 @@
 module.exports = ConfigWindow;
+var RollupWindow = require('./rollup_window');
 var $ = require('jquery');
 var EventEmitter = require('node-event-emitter').EventEmitter;
 
@@ -7,24 +8,29 @@ function ConfigWindow(){
   this.on = this.emitter.on;
   this.emit = this.emitter.emit;
   this.$el = $('.configuration.window');
-  var self = this;
-
-  this.$baudRate = this.$('#baudrate').change(function() {
-    self.handleBaudRateChange(this);
-  })
-
-  this.$('.probe input.active').change(function() {
-    self.handleActiveProbeChange(this)
-  })
-
-  this.$('.probe input.alias').keyup(function() {
-    self.handleAliasUpdate(this)
-  })
+  this.initialize();
 }
 
 ConfigWindow.prototype = {
   $: function(selector) {
     return this.$el.find(selector)
+  },
+  initialize: function() {
+    var self = this;
+
+    this.$baudRate = this.$('#baudrate').change(function() {
+      self.handleBaudRateChange(this);
+    })
+
+    this.$('.probe input.active').change(function() {
+      self.handleActiveProbeChange(this)
+    })
+
+    this.$('.probe input.alias').keyup(function() {
+      self.handleAliasUpdate(this)
+    })
+
+    RollupWindow.setup(this.$el);
   },
   getAttributes: function() {
     return {
