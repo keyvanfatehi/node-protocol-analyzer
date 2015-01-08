@@ -22,8 +22,12 @@ ConfigWindow.prototype = {
       self.handleBaudRateChange(this);
     })
 
-    this.$('.probe input.active').change(function() {
-      self.handleActiveProbeChange(this)
+    this.$('.sniffer-probe input.active').change(function() {
+      self.handleSnifferProbeChange(this);
+    })
+
+    this.$('.mitm-port select').change(function() {
+      self.handleMitmPortChange(this);
     })
 
     this.$('.probe input.alias').keyup(function() {
@@ -50,13 +54,19 @@ ConfigWindow.prototype = {
     $el.val(val)
     this.emit('change', ['baudRate'], this.getAttributes());
   },
-  handleActiveProbeChange: function(eventTarget) {
+  handleSnifferProbeChange: function(eventTarget) {
     var ports = this.getSelectedPorts();
     var $el = $(eventTarget);
     var checked = $el.prop('checked');
     var name = $el.val();
     if (ports.length > 2) return $el.prop('checked', false);
     this.emit('change', ['activeProbes'], this.getAttributes());
+  },
+  handleMitmPortChange: function(eventTarget) {
+    var $el = $(eventTarget);
+    var direction = $el.data('direction');
+    var value = $el.val();
+    console.log(value, direction);
   },
   handleAliasUpdate: function(eventTarget) {
     this.emit('change', ['probeAliases'], this.getAttributes());

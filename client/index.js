@@ -3,9 +3,11 @@ window.socket = require('./socket');
 require('./require_socket')();
 require('./socket_console')();
 var ConfigWindow = require('./config_window');
+var ProbeSelector = require('./probe_selector');
 var Workspace = require('./workspace');
 var workspace = new Workspace();
 var config = new ConfigWindow();
+var probeSelector = new ProbeSelector();
 
 $('body').append(workspace.$el);
 
@@ -31,25 +33,6 @@ socket.on('probe data', function(probe, data) {
   workspace.handleProbeData(probe, data);
 });
 
-
-function ProbeSelector() {
-  this.$el = $('.probe-selection')
-  this.setMode(this.getMode());
-}
-
-ProbeSelector.prototype.getMode = function() {
-  return this.$el.data('mode');
-}
-
-ProbeSelector.prototype.setMode = function(mode) {
-  console.log(mode);
-  this.$el.data(mode);
-  this.$el.find('>section').hide();
-  this.$el.find('>section[data-mode='+mode+']').show();
-}
-
-var probeSelector = new ProbeSelector();
-console.log(probeSelector);
 
 config.on('changed mode', function(mode) {
   probeSelector.setMode(mode);
