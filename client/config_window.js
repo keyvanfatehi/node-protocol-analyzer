@@ -30,7 +30,7 @@ ConfigWindow.prototype = {
       self.handleMitmPortChange(this);
     })
 
-    this.$('.probe input.alias').keyup(function() {
+    this.$('.sniffer-probe input.alias').keyup(function() {
       self.handleAliasUpdate(this)
     })
 
