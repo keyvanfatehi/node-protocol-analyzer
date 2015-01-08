@@ -1,7 +1,23 @@
-div#ports
-  each val, key in probes
-    div.probe
+section.probe-selection("data-mode"=options.mode)
+  section("data-mode"="sniffer")
+    h2 Active Probes
+    each val, key in probes
+      div.probe
+        label
+          input.active(type="checkbox" checked=val.isOpen value=key)
+          = key
+        //input.alias(data-name=key type="text" placeholder="alias") 
+  section("data-mode"="mitm")
+    h2 Active Ports
+    div.port
       label
-        input.active(type="checkbox" checked=val.isOpen value=key)
-        = key
-      input.alias(data-name=key type="text" placeholder="alias") 
+        | Upstream (Computer) Port: 
+        select
+          each val, key in probes
+            option(selected=(val.isOpen && val.isUpstream) value=key)= key
+    div.port
+      label
+        | Downstream (Device) Port: 
+        select
+          each val, key in probes
+            option(selected=(val.isOpen && val.isDownstream) value=key)= key

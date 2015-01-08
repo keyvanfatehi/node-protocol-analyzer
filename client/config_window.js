@@ -78,6 +78,7 @@ ConfigWindow.prototype = {
     },
     mode: function(self, newMode) {
       self.$('.mode-selection input[value='+newMode+']').prop('checked', true)
+      self.emit('changed mode', newMode);
     }
   },
   getBaudRate: function() {

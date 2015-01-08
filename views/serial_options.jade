@@ -1,7 +1,9 @@
-label
-  | Baud rate 
-  select#baudrate
-    each baudrate in baudrates
-      option(value=baudrate selected=options.baudRate===baudrate)= baudrate
+section.serial-settings
+  h2 Serial Settings
+  label
+    | Baud rate 
+    select#baudrate
+      each baudrate in baudrates
+        option(value=baudrate selected=options.baudRate===baudrate)= baudrate
 
-// and so on as documented here https://github.com/voodootikigod/node-serialport#to-use
+  // and so on as documented here https://github.com/voodootikigod/node-serialport#to-use

@@ -30,3 +30,27 @@ socket.on('changed options', function(options) {
 socket.on('probe data', function(probe, data) {
   workspace.handleProbeData(probe, data);
 });
+
+
+function ProbeSelector() {
+  this.$el = $('.probe-selection')
+  this.setMode(this.getMode());
+}
+
+ProbeSelector.prototype.getMode = function() {
+  return this.$el.data('mode');
+}
+
+ProbeSelector.prototype.setMode = function(mode) {
+  console.log(mode);
+  this.$el.data(mode);
+  this.$el.find('>section').hide();
+  this.$el.find('>section[data-mode='+mode+']').show();
+}
+
+var probeSelector = new ProbeSelector();
+console.log(probeSelector);
+
+config.on('changed mode', function(mode) {
+  probeSelector.setMode(mode);
+})

@@ -2,3 +2,7 @@
 @import url("./require_socket.css");
 @import url("./dark_theme.css");
 body { font-family: monospace; }
+
+.probe-selection > section {
+  display: none;
+}
