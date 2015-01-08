@@ -1,0 +1,86 @@
+<!DOCTYPE>
+<html>
+  <head>
+  </head>
+  <body>
+
+    <a href="#sniffer">Jump to sniffer hardware</a>
+    <a href="#mitm">Jump to man in the middle hardware</a>
+
+    <hr />
+
+    <h1 id="sniffer">Sniffer Probes</h1>
+    In sniffer mode, you use two serial cables and expose their RX wires (because you want to "receive" data). If the cable is a null modem cable, the TX and RX wires will be crossed, so be aware of that.
+    <div class="image">
+      <img src="probes.png" width="100%"/>
+      <span>
+
+        <p>
+        Here you see the two probes, each one with an RX and ground wire exposed.
+        </p>
+
+        <p>
+        These are then going to a USB-Serial adapter so our modern computers can see these two probes and listen to them from this app.
+        </p>
+
+      </span>
+    </div>
+
+    <p>
+    Using a breadboard, an existing serial connection is exposed and the probes are inserted. An RX wire from each probe taps both data lines via the breadboard. Make sure to wire the ground wires to common ground.
+    </p>
+
+    <div class="image">
+      <img src="probes2.png" width="100%"/>
+      <span>
+        <p>
+        In this image you can see how one could use the probes using a breadboard.
+        </p>
+
+      </span>
+    </div>
+
+
+
+    <h1 id="mitm">Man in the middle</h1>
+
+    <p>
+    In this mode, we don't futz with wires and breadboards. Instead, we use two null modem cables and do everything in software.
+    </p>
+
+    <div class="image">
+      <img src="mitm.png" width="100%"/>
+      <span>
+        <p>
+        Now instead of just listening, we're actively responsible for ensuring data gets where it needs to go. If we like, we can alter the data too!
+        </p>
+
+      </span>
+    </div>
+
+    <style>
+      a {
+        color: cyan;
+      }
+      body {
+        background-color: black;
+        color: white;
+        font-family: monospace;
+      }
+      .image img {
+        float: left;
+        top: 0; left: 0;
+      }
+      .image span {
+        padding-left: 15px;
+        padding-right: 15px;
+        background-color: rgba(10,10,10,.5);
+        position: absolute;
+        left: 0;
+      }
+      .clearfix {
+        clear: both;
+      }
+    </style>
+  </body>
+</html>
