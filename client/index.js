@@ -12,7 +12,6 @@ var probeSelector = new ProbeSelector();
 $('body').append(workspace.$el);
 
 config.on('change', function(changedKeys, attributes) {
-  console.log(attributes);
   changedKeys.forEach(function(key) {
     socket.emit('change '+key, attributes[key]);
   })

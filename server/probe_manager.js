@@ -18,12 +18,14 @@ ProbeManager.prototype.setOptions = function(opts) {
   };
 }
 
-ProbeManager.prototype.openProbe = function(name, cb) {
+ProbeManager.prototype.openProbe = function(name, direction, cb) {
   var options = this.options;
+  var mode = options.mode;
   this.getProbe(name, function(err, probe) {
     if (err) return cb(err);
     if (probe.isOpen) return cb(null, probe);
     probe.setOptions(options);
+    probe.setDirection(direction);
     probe.open(function(err) {
       if (err) return cb(err);
       probe.isOpen = true;

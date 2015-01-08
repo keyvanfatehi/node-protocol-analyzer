@@ -6,17 +6,17 @@ function BackChannel(probeManager) {
   this.pm = probeManager;
   var bc = this;
 
-  function openProbe(name) {
-    probeManager.openProbe(name, function(err, probe) {
+  function openProbe(name, direction) {
+    var mode = probeManager.options.mode;
+    probeManager.openProbe(name, direction, function(err, probe) {
       if (err) return bc.err(err);
-      var modeWhenOpened = probeManager.options.mode;
       probe.getSerialPort().on('close', function() {
-        bc.probeClosed(probe, modeWhenOpened);
+        bc.probeClosed(probe, mode);
       });
       probe.getSerialPort().on('data', function(buf) {
         bc.gotProbeData(probe, buf);
       });
-      bc.probeOpened(probe);
+      bc.probeOpened(probe, mode);
     });
   }
 
@@ -43,6 +43,12 @@ function BackChannel(probeManager) {
     bc.changedOptions(options);
   }
 
+  function getDirection(obj, target) {
+    if (probeManager.options.mode !== 'mitm') return null;
+    if (obj.upstream === target) return 'upstream';
+    if (obj.downstream === target) return 'downstream';
+  }
+
   this.io = new SocketIO();
   this.io.on('connection', function(socket) {
     socket.on('change activeProbes', function(activeProbes) {
@@ -51,8 +57,9 @@ function BackChannel(probeManager) {
         _.each(probes, function(probe) {
           var name = probe.name;
           var beActive = _.contains(activeProbes, name)
-          if (beActive) return openProbe(name);
-          if (! beActive) return closeProbe(name);
+          var direction = getDirection(activeProbes, name);
+          if (beActive) return openProbe(name, direction);
+          if (! beActive) return closeProbe(name, direction);
         })
       });
     });
@@ -82,12 +89,12 @@ BackChannel.prototype.info = function(msg) {
 }
 
 BackChannel.prototype.probeClosed = function(probe, mode) {
-  this.io.sockets.emit('probe closed', probe.name, mode);
+  this.io.sockets.emit('probe closed', probe.name, mode, probe.direction);
   this.info(probe.name+' closed');
 }
 
-BackChannel.prototype.probeOpened = function(probe) {
-  this.io.sockets.emit('probe opened', probe.name);
+BackChannel.prototype.probeOpened = function(probe, mode) {
+  this.io.sockets.emit('probe opened', probe.name, mode, probe.direction);
   this.info(probe.name+' opened at '+probe.options.baudRate+' baud');
 }
 

@@ -56,7 +56,6 @@ ConfigWindow.prototype = {
   },
   handleSnifferProbeChange: function(eventTarget) {
     var ports = this.getSelectedPorts();
-    console.log(ports);
     var $el = $(eventTarget);
     var checked = $el.prop('checked');
     var name = $el.val();
@@ -88,7 +87,7 @@ ConfigWindow.prototype = {
       self.$('select#baudrate').val(newBaudRate);
     },
     mode: function(self, newMode) {
-      self.$('.mode-selection input[value='+newMode+']').prop('checked', true)
+      self.$('.mode-selection input[value='+newMode+']').prop('checked', true);
       self.emit('changed mode', newMode);
     }
   },
@@ -98,13 +97,21 @@ ConfigWindow.prototype = {
   getSnifferProbeCheckbox: function(name) {
     return this.$('.sniffer-probe input[value="'+name+'"]');
   },
+  getMitmSelect: function(direction) {
+    var sel = '.mitm-port select[data-direction='+direction+']'; 
+    return this.$(sel);
+  },
+  getMitmValue: function(direction) {
+    var value = this.getMitmSelect(direction).val();
+    return value === '' ? null : value;
+  },
   portWasClosed: function(name, modeWhenOpened, direction) {
     this.caseMode({
       sniffer: function() {
         this.getSnifferProbeCheckbox(name).prop('checked', false);
       },
       mitm: function() {
-        console.log('mitm port closed', name, direction);
+        this.getMitmSelect(direction).val('');
       }
     }, modeWhenOpened);
   },
@@ -114,7 +121,7 @@ ConfigWindow.prototype = {
         this.getSnifferProbeCheckbox(name).prop('checked', true);
       },
       mitm: function() {
-        console.log('mitm port opened', name, direction);
+        this.getMitmSelect(direction).val(name);
       }
     })
   },
@@ -138,16 +145,9 @@ ConfigWindow.prototype = {
     return out;
   },
   getMitmPorts: function() {
-    var mkSelector = function(d) {
-      return '.mitm-port select[data-direction='+d+']'; 
-    }
-    var get = function(direction) {
-      var value = this.$(mkSelector(direction)).val();
-      return value === '' ? null : value;
-    }
     return {
-      upstream: get('upstream'),
-      downstream: get('downstream')
+      upstream: this.getMitmValue('upstream'),
+      downstream: this.getMitmValue('downstream')
     };
   },
   getSelectedMode: function() {
