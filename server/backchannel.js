@@ -16,7 +16,9 @@ function BackChannel(probeManager) {
       probe.getSerialPort().on('data', function(buf) {
         bc.gotProbeData(probe, buf);
       });
-      bc.probeOpened(probe, mode);
+      setTimeout(function() {
+        bc.probeOpened(probe, mode);
+      }, 100);
     });
   }
 
