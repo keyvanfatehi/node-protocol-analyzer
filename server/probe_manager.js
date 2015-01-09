@@ -2,12 +2,15 @@ module.exports = ProbeManager
 var _ = require('lodash')
 var serialport = require('serialport')
 var Probe = require('./probe')
+var dsl = require('../lib/dsl')
+var MitmSession = require('./mitm_session');
 
 function ProbeManager() {
   this._probes = {};
   this.options = {
     baudRate: 38400,
-    mode: 'mitm'
+    mode: 'mitm',
+    script: this.script || dsl.exampleScript
   };
 }
 
@@ -68,5 +71,20 @@ ProbeManager.prototype.getOpenProbes = function(cb) {
   this.getProbes(function(err, probes) {
     if (err) return cb(err);
     cb(err, _.where(probes, { isOpen: true }));
+  })
+}
+
+ProbeManager.prototype.createMitmSession = function(script, cb) {
+  this.getProbes(function(err, probes) {
+    if (err) return cb(err);
+    var downstream = _.find(probes, { isOpen: true, direction: 'downstream' });
+    var upstream = _.find(probes, { isOpen: true, direction: 'upstream' });
+    if (upstream && downstream) {
+      var session = new MitmSession();
+      session.setProbes(upstream, downstream);
+      session.setScript(script);
+      return cb(null, session);
+    }
+    return cb(new Error("You must designate upstream and downstream ports"));
   })
 }

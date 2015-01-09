@@ -13,8 +13,6 @@ Probe.prototype.setOptions = function(opts) {
 
 Probe.prototype.setDirection = function(direction) {
   this.direction = direction;
-  console.log(this.name, this.direction, this.options.mode);
-  console.log('so whats it mean for Probe to be set in a direction ?');
 }
 
 Probe.prototype.createSerialPort = function() {

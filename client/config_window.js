@@ -38,6 +38,10 @@ ConfigWindow.prototype = {
       self.handleModeChange(this)
     })
 
+    this.$('section[data-mode=mitm] button[value=run]').click(function() {
+      self.emit('mitm run', self.getMitmScript());
+    });
+
     RollupWindow.setup(this.$el);
   },
   getAttributes: function() {
@@ -66,6 +70,9 @@ ConfigWindow.prototype = {
     var $el = $(eventTarget);
     var direction = $el.data('direction');
     var value = $el.val();
+    var ports = this.getSelectedPorts();
+    var samePort = ports.upstream === ports.downstream;
+    if (value !== '' && samePort) return $el.val('');
     this.emit('change', ['activeProbes'], this.getAttributes());
   },
   handleAliasUpdate: function(eventTarget) {
@@ -149,6 +156,9 @@ ConfigWindow.prototype = {
       upstream: this.getMitmValue('upstream'),
       downstream: this.getMitmValue('downstream')
     };
+  },
+  getMitmScript: function() {
+    return this.$('.mitm-script').text();
   },
   getSelectedMode: function() {
     return this.$('.mode-selection input:checked').val();

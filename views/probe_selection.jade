@@ -1,25 +1,5 @@
 section.probe-selection("data-mode"=options.mode)
   section("data-mode"="sniffer")
-    h2 Active Probes
-    each val, key in probes
-      div.sniffer-probe
-        label
-          input.active(type="checkbox" checked=val.isOpen value=key)
-          = key
-        //input.alias(data-name=key type="text" placeholder="alias") 
+    include ./sniffer_config
   section("data-mode"="mitm")
-    h2 Port Configuration
-    div.mitm-port
-      label
-        | Upstream (Computer) Port: 
-        select("data-direction"="upstream")
-          option(value='') Select a Port
-          each val, key in probes
-            option(selected=(val.isOpen && val.isUpstream) value=key)= key
-    div.mitm-port
-      label
-        | Downstream (Device) Port: 
-        select("data-direction"="downstream")
-          option(value='') Select a Port
-          each val, key in probes
-            option(selected=(val.isOpen && val.isDownstream) value=key)= key
+    include ./mitm_config

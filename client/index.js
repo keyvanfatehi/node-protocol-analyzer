@@ -31,3 +31,7 @@ socket.on('probe data', function(probe, data) {
 config.on('changed mode', function(mode) {
   probeSelector.setMode(mode);
 })
+
+config.on('mitm run', function(script) {
+  socket.emit('mitm run', script);
+})

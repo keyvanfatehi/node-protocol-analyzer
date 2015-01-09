@@ -13,9 +13,11 @@ function BackChannel(probeManager) {
       probe.getSerialPort().on('close', function() {
         bc.probeClosed(probe, mode);
       });
-      probe.getSerialPort().on('data', function(buf) {
-        bc.gotProbeData(probe, buf);
-      });
+      if (mode === 'sniffer') {
+        probe.getSerialPort().on('data', function(buf) {
+          bc.gotProbeData(probe, buf);
+        });
+      }
       setTimeout(function() {
         bc.probeOpened(probe, mode);
       }, 100);
@@ -76,6 +78,14 @@ function BackChannel(probeManager) {
 
     socket.on('change probeAliases', function(probeAliases) {
       console.log(probeAliases);
+    })
+
+    socket.on('mitm run', function(script) {
+      probeManager.createMitmSession(script, function(err, session) {
+        if (err) return console.error(err.message);
+        session.start();
+        console.log('started mitm session');
+      });
     })
   });
 }
