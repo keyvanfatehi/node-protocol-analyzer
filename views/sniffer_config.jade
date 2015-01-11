@@ -1,0 +1,7 @@
+h2 Active Probes
+each val, key in probes
+  div.sniffer-probe
+    label
+      input.active(type="checkbox" checked=val.isOpen value=key)
+      = key
+    //input.alias(data-name=key type="text" placeholder="alias") 

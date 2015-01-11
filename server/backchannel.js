@@ -3,18 +3,24 @@ var _ = require('lodash');
 module.exports = BackChannel
   
 function BackChannel(probeManager) {
+  this.pm = probeManager;
   var bc = this;
 
-  function openProbe(name) {
-    probeManager.openProbe(name, function(err, probe) {
+  function openProbe(name, direction) {
+    var mode = probeManager.options.mode;
+    probeManager.openProbe(name, direction, function(err, probe) {
       if (err) return bc.err(err);
       probe.getSerialPort().on('close', function() {
-        bc.probeClosed(probe);
+        bc.probeClosed(probe, mode);
       });
-      probe.getSerialPort().on('data', function(buf) {
-        bc.gotProbeData(probe, buf);
-      });
-      bc.probeOpened(probe);
+      if (mode === 'sniffer') {
+        probe.getSerialPort().on('data', function(buf) {
+          bc.gotProbeData(probe, buf);
+        });
+      }
+      setTimeout(function() {
+        bc.probeOpened(probe, mode);
+      }, 100);
     });
   }
 
@@ -25,17 +31,26 @@ function BackChannel(probeManager) {
   }
 
   function changeSerialOptions(options) {
+    var modeNotBeingChanged = !options.mode;
     probeManager.setOptions(options);
     probeManager.getOpenProbes(function(err, openProbes) {
       if (err) return bc.err(err);
       openProbes.forEach(function(probe) {
-        probe.getSerialPort().on('close', function() {
-          openProbe(probe.name);
-        });
+        if (modeNotBeingChanged) {
+          probe.getSerialPort().on('close', function() {
+            openProbe(probe.name);
+          });
+        }
         closeProbe(probe.name);
       });
     });
     bc.changedOptions(options);
+  }
+
+  function getDirection(obj, target) {
+    if (probeManager.options.mode !== 'mitm') return null;
+    if (obj.upstream === target) return 'upstream';
+    if (obj.downstream === target) return 'downstream';
   }
 
   this.io = new SocketIO();
@@ -46,8 +61,9 @@ function BackChannel(probeManager) {
         _.each(probes, function(probe) {
           var name = probe.name;
           var beActive = _.contains(activeProbes, name)
-          if (beActive) return openProbe(name);
-          if (! beActive) return closeProbe(name);
+          var direction = getDirection(activeProbes, name);
+          if (beActive) return openProbe(name, direction);
+          if (! beActive) return closeProbe(name, direction);
         })
       });
     });
@@ -56,8 +72,20 @@ function BackChannel(probeManager) {
       changeSerialOptions({ baudRate: baudRate });
     });
 
+    socket.on('change mode', function(mode) {
+      changeSerialOptions({ mode: mode });
+    });
+
     socket.on('change probeAliases', function(probeAliases) {
       console.log(probeAliases);
+    })
+
+    socket.on('mitm run', function(script) {
+      probeManager.createMitmSession(script, function(err, session) {
+        if (err) return console.error(err.message);
+        session.start();
+        console.log('started mitm session');
+      });
     })
   });
 }
@@ -72,13 +100,13 @@ BackChannel.prototype.info = function(msg) {
   this.io.sockets.emit('info', msg);
 }
 
-BackChannel.prototype.probeClosed = function(probe) {
-  this.io.sockets.emit('probe closed', probe.name);
+BackChannel.prototype.probeClosed = function(probe, mode) {
+  this.io.sockets.emit('probe closed', probe.name, mode, probe.direction);
   this.info(probe.name+' closed');
 }
 
-BackChannel.prototype.probeOpened = function(probe) {
-  this.io.sockets.emit('probe opened', probe.name);
+BackChannel.prototype.probeOpened = function(probe, mode) {
+  this.io.sockets.emit('probe opened', probe.name, mode, probe.direction);
   this.info(probe.name+' opened at '+probe.options.baudRate+' baud');
 }
 

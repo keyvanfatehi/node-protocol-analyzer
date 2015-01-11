@@ -3,9 +3,11 @@ window.socket = require('./socket');
 require('./require_socket')();
 require('./socket_console')();
 var ConfigWindow = require('./config_window');
+var ProbeSelector = require('./probe_selector');
 var Workspace = require('./workspace');
 var workspace = new Workspace();
 var config = new ConfigWindow();
+var probeSelector = new ProbeSelector();
 
 $('body').append(workspace.$el);
 
@@ -15,18 +17,21 @@ config.on('change', function(changedKeys, attributes) {
   })
 })
 
-socket.on('probe closed', function(name) {
-  config.getPortCheckbox(name).prop('checked', false);
-})
-
-socket.on('probe opened', function(name) {
-  config.getPortCheckbox(name).prop('checked', true);
-})
+socket.on('probe closed', config.portWasClosed.bind(config));
+socket.on('probe opened', config.portWasOpened.bind(config));
 
 socket.on('changed options', function(options) {
-  config.setOptions(options);
+  config.optionsWereChanged(options);
 })
 
 socket.on('probe data', function(probe, data) {
   workspace.handleProbeData(probe, data);
 });
+
+config.on('changed mode', function(mode) {
+  probeSelector.setMode(mode);
+})
+
+config.on('mitm run', function(script) {
+  socket.emit('mitm run', script);
+})

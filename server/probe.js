@@ -11,6 +11,10 @@ Probe.prototype.setOptions = function(opts) {
   this.options = opts;
 }
 
+Probe.prototype.setDirection = function(direction) {
+  this.direction = direction;
+}
+
 Probe.prototype.createSerialPort = function() {
   this._serialport = null;
   this._serialport = new SerialPort(this.name, this.options);
