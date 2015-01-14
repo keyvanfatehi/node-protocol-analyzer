@@ -4,17 +4,13 @@ var probeManager = new ProbeManager();
 var config = {
   baudRate: 38400,
   mode: 'mitm',
-  upstream: 'COM3',
-  downstream: 'COM6',
-  dtr: true,
-  dts: true
+  upstream: '/dev/ttyO2',
+  downstream: '/dev/ttyO1'
 }
 
 probeManager.setOptions({
   baudRate: config.baudRate,
-  mode: config.mode,
-  dtr: config.dtr,
-  dts: config.dts
+  mode: config.mode
 })
 
 probeManager.openProbe(config.upstream, 'upstream', function(err, upstream) {
@@ -25,7 +21,6 @@ probeManager.openProbe(config.upstream, 'upstream', function(err, upstream) {
     console.log(downstream.name, 'opened as downstream');
     probeManager.createMitmSession('', function(err, session){
       if (err) throw err;
-      //console.log(com3, com6);
       session.start();
       console.log('started mitm session');
     });

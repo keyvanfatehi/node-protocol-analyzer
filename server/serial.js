@@ -1,27 +1,27 @@
 var serialport = require('serialport')
 var SerialPort = serialport.SerialPort
 var opts = {
-  baudrate: 38400
+  baudRate: 38400
 }
 
-serialport.list(function (err, ports) {
-  ports.forEach(function (port) {
-    console.log(port.comName);
-    console.log(port.pnpId);
-    console.log(port.manufacturer);
+var upstream = new SerialPort('/dev/ttyO2', opts)
+var downstream = new SerialPort('/dev/ttyO1', opts)
+
+upstream.on('open', function() {
+  downstream.on('open', function() {
+    bridge();
+    console.log('bridged');
   })
 })
 
-var COM4 = new SerialPort('COM4', opts)
-var COM5 = new SerialPort('COM5', opts)
-COM4.on('open', handler(COM4))
-COM5.on('open', handler(COM5))
+function bridge() {
+  upstream.on('data', function(chk) {
+    console.log(chk.toString());
+    downstream.write(chk);
+  })
 
-function handler(port) {
-  return function() {
-    port.on('data', function(chk) {
-      console.log(port.path, 'data', chk.toString())
-    })
-    console.log(port.path, 'open')
-  }
+  downstream.on('data', function(chk) {
+    console.log(chk.toString());
+    upstream.write(chk);
+  })
 }
