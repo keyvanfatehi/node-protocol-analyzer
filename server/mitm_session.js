@@ -15,12 +15,16 @@ MitmSession.prototype.setScript = function(script) {
 MitmSession.prototype.start = function() {
   var upstream = this.upstream.getSerialPort();
   var downstream = this.downstream.getSerialPort();
+  upstream.pipe(downstream);
+  downstream.pipe(upstream);
+  /*
   upstream.on('data', function(buffer) {
     console.log('upstream sent '+buffer.length+' bytes, forwarding downstream');
-    downstream.write(buffer);
+    //downstream.write(buffer);
   });
   downstream.on('data', function(buffer) {
     console.log('downstream sent '+buffer.length+' bytes, forwarding upstream');
-    upstream.write(buffer);
+    //upstream.write(buffer);
   });
+ */
 }

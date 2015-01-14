@@ -17,7 +17,11 @@ Probe.prototype.setDirection = function(direction) {
 
 Probe.prototype.createSerialPort = function() {
   this._serialport = null;
-  this._serialport = new SerialPort(this.name, this.options);
+  this._serialport = new SerialPort(this.name, {
+    baudRate: this.options.baudRate,
+    dtr: this.options.dtr || false,
+    dts: this.options.dts || false
+  });
 }
  
 Probe.prototype.open = function(cb) {

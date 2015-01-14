@@ -81,6 +81,7 @@ function BackChannel(probeManager) {
     })
 
     socket.on('mitm run', function(script) {
+      throw new Error("FIXME not how u create mitm sessions anymore");
       probeManager.createMitmSession(script, function(err, session) {
         if (err) return console.error(err.message);
         session.start();
